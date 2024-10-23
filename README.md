@@ -1,0 +1,1 @@
+# cwallet-translate-script
