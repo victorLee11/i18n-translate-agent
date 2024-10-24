@@ -3,7 +3,6 @@
   "version": "0.1.2",
   "description": "",
   "author": "cwallet",
-  "private": "true",
   "publishConfig": {
     "access": "restricted"
   },
