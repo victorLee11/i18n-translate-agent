@@ -32,8 +32,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const API_KEY =
-  "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";
 /**源语言文件 */
 const SOURCE_LANGUAGE_FOLDER = "en";
 
@@ -57,6 +55,7 @@ const translate = async (params: ITranslate) => {
     language,
     /** 待翻译的文件名 */
     fileName,
+    translateJson,
     multiBar,
     callback,
   } = params;
@@ -67,45 +66,16 @@ const translate = async (params: ITranslate) => {
       SOURCE_LANGUAGE_FOLDER,
       fileName
     );
-    /** 缓存文件路径 */
-    const cacheFilePath = path.join(CACHE_PATH, language, fileName);
-
-    // 若没有待翻译的文件，直接返回
-    if (!fs.existsSync(translateFilePath)) {
-      console.dir(`File not found: ${translateFilePath}`);
-      return;
-    }
-    const translateFileObject = await readJsonFileSync(translateFilePath);
-
-    const cacheObject = await getCacheFileSync(cacheFilePath);
-    const diffObject = translateJSONDiffToJson(
-      cacheObject,
-      translateFileObject
-    );
-
-    if (Object.values(diffObject).length === 0) {
-      if (Object.keys(translateFileObject).length === 0) {
-        outputLanguageFile({
-          jsonMap: {},
-          folderName: language,
-          fileName,
-          translateFilePath,
-        });
-      }
-      //   console.log(`${language}:${fileName} 没有需要翻译的内容`);
-      callback();
-      return;
-    }
 
     /** 初始化openAi */
     const client = new OpenAI({
-      apiKey: API_KEY,
+      apiKey: "",
     });
     // 等待翻译的数组
     const jsonMap: IJson = {};
 
     // 生成chat循环代码
-    const promiseList = Object.entries(diffObject).map(
+    const promiseList = Object.entries(translateJson).map(
       ([key, value], index) =>
         () =>
           translateChat({
@@ -118,11 +88,6 @@ const translate = async (params: ITranslate) => {
           })
     );
 
-    if (promiseList.length === 0) {
-      console.log(`${language}:${fileName} 没有需要翻译的内容`);
-      callback();
-      return;
-    }
     const progressBar = multiBar.create(promiseList.length, 0);
 
     for (const fn of promiseList) {
@@ -138,7 +103,7 @@ const translate = async (params: ITranslate) => {
       fileName,
       translateFilePath,
     });
-    callback();
+    callback && callback();
   } catch (error) {
     logErrorToFile({
       error: error as Error,
@@ -253,6 +218,38 @@ const outputLanguageFile = async (params: IOutputLanguageFile) => {
   });
 };
 
+const getTranslateContent = async (
+  language: SupportLanguageType,
+  fileName: string
+): Promise<IJson | undefined> => {
+  const translateFilePath = path.join(
+    ENTRY_PATH,
+    SOURCE_LANGUAGE_FOLDER,
+    fileName
+  );
+  /** 缓存文件路径 */
+  const cacheFilePath = path.join(CACHE_PATH, language, fileName);
+  if (!fs.existsSync(translateFilePath)) {
+    console.dir(`File not found: ${translateFilePath}`);
+    return;
+  }
+  const translateFileObject = await readJsonFileSync(translateFilePath);
+  const cacheObject = await getCacheFileSync(cacheFilePath);
+  const diffObject = translateJSONDiffToJson(cacheObject, translateFileObject);
+  if (Object.values(diffObject).length === 0) {
+    if (Object.keys(translateFileObject).length === 0) {
+      outputLanguageFile({
+        jsonMap: {},
+        folderName: language,
+        fileName,
+        translateFilePath,
+      });
+    }
+    return;
+  }
+  return diffObject;
+};
+
 const init = async () => {
   console.log(
     "🚀 ------------------------- translate starts ------------------------- 🚀"
@@ -274,20 +271,28 @@ const init = async () => {
   let promises = [];
   const arr: (() => Promise<void>)[] = [];
 
-  Object.keys(SUPPORT_LANGUAGE_MAP).forEach((language) => {
+  for (const language of Object.keys(SUPPORT_LANGUAGE_MAP)) {
     // 源语言不翻译
-    if (language === SOURCE_LANGUAGE_FOLDER) return;
-    translateFolders.forEach((fileName) => {
+    if (language === SOURCE_LANGUAGE_FOLDER) continue;
+    for (const fileName of translateFolders) {
+      const translateJson = await getTranslateContent(
+        language as SupportLanguageType,
+        fileName
+      );
+      if (!translateJson) {
+        console.log(`${language}:${fileName} 没有需要翻译的内容`);
+        continue;
+      }
       arr.push(() =>
         translate({
           language: language as SupportLanguageType,
           fileName,
           multiBar,
-          callback: () => {},
+          translateJson,
         })
       );
-    });
-  });
+    }
+  }
 
   promises = chunkArray(arr, 8);
 
@@ -300,5 +305,3 @@ const init = async () => {
     "🚀 ------------------------- translate end ------------------------- 🚀"
   );
 };
-
-init();

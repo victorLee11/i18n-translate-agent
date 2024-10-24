@@ -116,7 +116,7 @@
         "ansi-colors": "ansi-colors"
       }
     ],
-    "outDir": "./dist",
+    "outDir": "./",
     "rootDir": "./src"
   },
   "include": ["src/**/*.ts"],

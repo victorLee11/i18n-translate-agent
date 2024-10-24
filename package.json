@@ -1,15 +1,24 @@
 {
-  "name": "cwallet-translate-script",
-  "version": "1.0.0",
+  "name": "cwallet-translate",
+  "version": "0.1.2",
   "description": "",
+  "author": "cwallet",
+  "keywords": [
+    "translate",
+    "openai"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cctip/cwallet-translate-script.git"
+  },
+  "homepage": "https://github.com/cctip/cwallet-translate-script",
+  "bugs": "https://github.com/xxx/cwallet-translate-script/issues",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "translate": "npx tsc && ts-node ./dist/index.js"
+    "publish": "npx tsc && npm publish"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "ansi-colors": "^4.1.3",
     "cli-progress": "^3.12.0",

@@ -78,8 +78,9 @@ export interface IJson {
 export interface ITranslate {
   language: SupportLanguageType;
   fileName: string;
+  translateJson: IJson;
   multiBar: MultiBar;
-  callback: () => void;
+  callback?: () => void;
 }
 
 export interface ITranslateChat {

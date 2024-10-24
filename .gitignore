@@ -2,9 +2,9 @@
 
 # dependencies
 /node_modules
-# /src/langs/*
-# /src/output/*
-# /src/cache/*
+/src/langs/*
+/src/output/*
+/src/cache/*
 
 
 # production
