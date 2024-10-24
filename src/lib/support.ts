@@ -1,15 +1,12 @@
 import { SupportLanguageMap } from "../types";
 
-/**
- * code 语言code 暂时无用
- * */
 export const SUPPORT_LANGUAGE_MAP: SupportLanguageMap = {
   en: {
     code: "en",
     name: "英语",
   },
   ["zh-CN"]: {
-    code: "zh",
+    code: "zh-CN",
     name: "简体中文",
   },
   ["zh-TW"]: {

@@ -3,6 +3,10 @@
   "version": "0.1.2",
   "description": "",
   "author": "cwallet",
+  "private": "true",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "keywords": [
     "translate",
     "openai"
@@ -29,9 +33,5 @@
     "@types/cli-progress": "^3.11.6",
     "@types/node": "^22.7.9",
     "typescript": "^5.6.3"
-  },
-  "exports": {
-    "./lib": "./dist/lib/index.js",
-    "./cache": "./dist/lib/cache/index.js"
   }
 }

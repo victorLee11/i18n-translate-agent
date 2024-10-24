@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 export interface ILanguage {
   /** 语言code */
-  code?: string;
+  code: SupportLanguageType;
   /**语言名称 */
   name: string;
 }
@@ -75,7 +75,7 @@ export interface IJson {
   [key: string]: string;
 }
 
-export interface ITranslate {
+export interface ISingleTranslate {
   language: SupportLanguageType;
   fileName: string;
   translateJson: IJson;
@@ -86,7 +86,6 @@ export interface ITranslate {
 export interface ITranslateChat {
   key: string;
   value: string;
-  client: OpenAI;
   language: SupportLanguageType;
   index: number;
   fileName: string;
@@ -97,4 +96,22 @@ export interface ITranslateChatResponse {
   value: string;
   index: number;
   error?: Error;
+}
+
+export interface ICwalletTranslateParams {
+  key: string;
+  cacheFileRootPath: string;
+  /** await translate file root path */
+  fileRootPath: string;
+  fineTune: string[];
+  languages: SupportLanguageType[];
+  outputRootPath?: string;
+  sourceLanguage?: SupportLanguageType;
+  openaiConfig?: IOpenaiConfig;
+}
+
+export interface ITranslate {}
+
+export interface IOpenaiConfig {
+  model: OpenAI.Chat.ChatModel;
 }
