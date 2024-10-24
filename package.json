@@ -1,8 +1,8 @@
 {
-  "name": "cwallet-translate",
+  "name": "@cwallet/translate",
   "version": "0.2.2",
   "description": "",
-  "author": "cwallet",
+  "author": "maybe",
   "publishConfig": {
     "access": "restricted"
   },
