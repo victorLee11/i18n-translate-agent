@@ -20,7 +20,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "publish": "npx tsc && npm publish"
+    "publish": "npx tsc && npm publish",
+    "compile": "tsc"
   },
   "dependencies": {
     "ansi-colors": "^4.1.3",
