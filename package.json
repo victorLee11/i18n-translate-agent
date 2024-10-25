@@ -1,5 +1,5 @@
 {
-  "name": "cwallet-translate",
+  "name": "cc-translate",
   "version": "0.3.6",
   "description": "A language translation tool based on OpenAI",
   "author": "maybe",
