@@ -97,8 +97,10 @@ export class CwalletTranslate {
       this.ENTRY_ROOT_PATH,
       this.SOURCE_LANGUAGE
     );
+    console.log("🚀 ~ translateFolderPath:", translateFolderPath);
     // 翻译源语言问价夹下的所有json文件
     const translateFolders = await readFileOfDirSync(translateFolderPath);
+    console.log("🚀 ~ translateFolders:", translateFolders);
     // 创建进度条
     const multiBar = new cliProgress.MultiBar(
       {
@@ -356,7 +358,11 @@ export class CwalletTranslate {
 
     // 注册缓存
     registerLanguageCacheFile({
-      sourceFilePath: path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
+      sourceFilePath: path.join(
+        this.ENTRY_ROOT_PATH,
+        this.SOURCE_LANGUAGE,
+        fileName
+      ),
       jsonMap: newJsonMap,
       fileName,
       language: folderName,
