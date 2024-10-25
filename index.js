@@ -222,26 +222,25 @@ export class CwalletTranslate {
          */
         this.outputLanguageFile = (params) => __awaiter(this, void 0, void 0, function* () {
             const { folderName, fileName, jsonMap, translateFilePath } = params;
-            if (Object.values(jsonMap).length === 0) {
-                yield fs.writeFileSync(path.join(`${this.outputPath}/${folderName}/${fileName}`), JSON.stringify({}, null, 2), "utf8");
-                return;
-            }
+            const outputFilePath = path.join(this.outputPath, folderName, fileName);
             //创建输出文件夹
             notExistsToCreateFile(this.outputPath);
             //创建输出的语言文件夹
             notExistsToCreateFile(`${this.outputPath}/${folderName}`);
-            // 不存在翻译文件 则直接写入
-            if (!fs.existsSync(`${this.outputPath}/${folderName}/${fileName}`)) {
-                yield fs.writeFileSync(path.resolve(`${this.outputPath}/${folderName}/${fileName}`), JSON.stringify(jsonMap, null, 2), "utf8");
-                // 注册缓存
+            let oldJsonData = "";
+            // 检查是否存在文件
+            if (!fs.existsSync(outputFilePath)) {
+                oldJsonData = yield fs.readFileSync(path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName), "utf8");
             }
-            const oldJsonData = yield fs.readFileSync(`${this.outputPath}/${folderName}/${fileName}`, "utf8");
+            else {
+                oldJsonData = yield fs.readFileSync(outputFilePath, "utf8");
+            }
             const oldJsonMap = JSON.parse(oldJsonData);
             const newJsonMap = Object.assign(oldJsonMap, jsonMap);
-            yield fs.writeFileSync(path.resolve(`${this.outputPath}/${folderName}/${fileName}`), JSON.stringify(newJsonMap, null, 2), "utf8");
+            yield fs.writeFileSync(path.resolve(outputFilePath), JSON.stringify(newJsonMap, null, 2), "utf8");
             // 注册缓存
             registerLanguageCacheFile({
-                sourceFilePath: translateFilePath,
+                sourceFilePath: path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
                 jsonMap: newJsonMap,
                 fileName,
                 language: folderName,

@@ -6,8 +6,8 @@ const client = new CwalletTranslate({
   cacheFileRootPath: "./src/cache",
   fileRootPath: "./src/langs",
   fineTune: ["我们是一个区块链钱包", "请更加专业更加通俗的翻译"],
-  languages: ["zh-CN", "zh-TW", "ja", "ko", "ar"],
-  outputRootPath: "./src/output",
+  languages: ["ar"],
+  outputRootPath: "./src/langs",
 });
 
 client.translate();

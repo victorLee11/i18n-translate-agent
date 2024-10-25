@@ -716,7 +716,6 @@
   "general.kyc.appears": "As it appears in your passport",
   "general.kyc.card": "As it appears on your card",
   "general.kyc.field": "Leave this field blank if you don’t have middle name(s).",
-  "general.kyc.from": "Incomplete From",
   "general.kyc.include": "Your first name should include only letters (a-Z).",
   "general.kyc.blank": "First name can’t be left blank. If you don’t have an official first/given name on your passport, please enter ‘FNU’.",
   "general.kyc.official": "First name can’t be left blank. If you don’t have an official first/given name on your identity card, please enter ‘FNU’.",
@@ -775,5 +774,6 @@
   "general.reviewing": "Reviewing",
   "general.rename": "Rename",
   "general.revVerify.passkeyiewing": "Verify your account ownership with payment PIN to create a passkey",
-  "general.locked.telegram.accounts.tip": "New Telegram accounts are restricted from using sensitive commands for the first 24 hours after connection"
+  "general.locked.telegram.accounts.tip": "New Telegram accounts are restricted from using sensitive commands for the first 24 hours after connection",
+  "general.kyc.from": "Incomplete From"
 }

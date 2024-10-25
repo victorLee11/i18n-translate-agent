@@ -68,6 +68,7 @@ export interface IRegisterLanguageCacheFile {
   fileName: string;
   language: SupportLanguageType;
   jsonMap: IJson;
+  /** await translate file path */
   sourceFilePath: string;
 }
 

@@ -330,42 +330,33 @@ export class CwalletTranslate {
    */
   outputLanguageFile = async (params: IOutputLanguageFile) => {
     const { folderName, fileName, jsonMap, translateFilePath } = params;
-    if (Object.values(jsonMap).length === 0) {
-      await fs.writeFileSync(
-        path.join(`${this.outputPath}/${folderName}/${fileName}`),
-        JSON.stringify({}, null, 2),
-        "utf8"
-      );
-      return;
-    }
+    const outputFilePath = path.join(this.outputPath, folderName, fileName);
     //创建输出文件夹
     notExistsToCreateFile(this.outputPath);
     //创建输出的语言文件夹
     notExistsToCreateFile(`${this.outputPath}/${folderName}`);
-    // 不存在翻译文件 则直接写入
-    if (!fs.existsSync(`${this.outputPath}/${folderName}/${fileName}`)) {
-      await fs.writeFileSync(
-        path.resolve(`${this.outputPath}/${folderName}/${fileName}`),
-        JSON.stringify(jsonMap, null, 2),
+    let oldJsonData: string = "";
+    // 检查是否存在文件
+    if (!fs.existsSync(outputFilePath)) {
+      oldJsonData = await fs.readFileSync(
+        path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
         "utf8"
       );
-      // 注册缓存
+    } else {
+      oldJsonData = await fs.readFileSync(outputFilePath, "utf8");
     }
+    const oldJsonMap: IJson = JSON.parse(oldJsonData);
+    const newJsonMap: IJson = Object.assign(oldJsonMap, jsonMap);
 
-    const oldJsonData = await fs.readFileSync(
-      `${this.outputPath}/${folderName}/${fileName}`,
-      "utf8"
-    );
-    const oldJsonMap = JSON.parse(oldJsonData);
-    const newJsonMap = Object.assign(oldJsonMap, jsonMap);
     await fs.writeFileSync(
-      path.resolve(`${this.outputPath}/${folderName}/${fileName}`),
+      path.resolve(outputFilePath),
       JSON.stringify(newJsonMap, null, 2),
       "utf8"
     );
+
     // 注册缓存
     registerLanguageCacheFile({
-      sourceFilePath: translateFilePath,
+      sourceFilePath: path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
       jsonMap: newJsonMap,
       fileName,
       language: folderName,
