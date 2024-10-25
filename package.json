@@ -1,6 +1,6 @@
 {
   "name": "cwallet-translate",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "author": "maybe",
   "packageManager": "yarn@1.22.22",
@@ -27,14 +27,9 @@
     "compile": "tsc"
   },
   "exports": {
-    "./*.mjs": {
-      "types": "./*.d.ts",
-      "default": "./*.mjs"
-    },
-    "./*": {
-      "types": "./*.d.ts",
-      "require": "./*.js",
-      "default": "./*.mjs"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     }
   },
   "dependencies": {
