@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { notExistsToCreateFile, readJsonFileSync } from "../utils.js";
-import { IJson, IRegisterLanguageCacheFile } from "@/types";
+import { IJson, IRegisterLanguageCacheFile } from "../../types";
 
 /**
  * 和翻译缓存json文件对比 返回存在更改的json文件

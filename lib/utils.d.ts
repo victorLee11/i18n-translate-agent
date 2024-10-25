@@ -1,4 +1,4 @@
-import { ICreateJsonFileParams } from "@/types";
+import { ICreateJsonFileParams } from "../types";
 /**
  * 不存在的文件夹则创建
  * @param {string} path

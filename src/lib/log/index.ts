@@ -1,4 +1,4 @@
-import { ITranslateLogError } from "@/types";
+import { ITranslateLogError } from "../../types";
 import fs from "fs";
 
 export function logErrorToFile(params: ITranslateLogError) {

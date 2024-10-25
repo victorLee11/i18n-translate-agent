@@ -1,4 +1,4 @@
-import { IJson, IRegisterLanguageCacheFile } from "@/types";
+import { IJson, IRegisterLanguageCacheFile } from "../../types";
 /**
  * 和翻译缓存json文件对比 返回存在更改的json文件
  * @param {object} cacheObject 已经缓存的对象

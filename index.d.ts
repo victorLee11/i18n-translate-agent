@@ -1,5 +1,5 @@
 import { OpenAI } from "openai";
-import { ICwalletTranslateParams, IJson, ILanguage, IOpenaiConfig, IOutputLanguageFile, ISingleTranslate, ITranslateChat, ITranslateChatResponse, SupportLanguageType } from "@/types";
+import { ICwalletTranslateParams, IJson, ILanguage, IOpenaiConfig, IOutputLanguageFile, ISingleTranslate, ITranslateChat, ITranslateChatResponse, SupportLanguageType } from "./types";
 export declare class CwalletTranslate {
     private OPENAI_KEY;
     CACHE_ROOT_PATH: string;

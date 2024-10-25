@@ -13,7 +13,7 @@ import {
   ITranslateChat,
   ITranslateChatResponse,
   SupportLanguageType,
-} from "@/types";
+} from "./types";
 import {
   chunkArray,
   getRandomNumber,
