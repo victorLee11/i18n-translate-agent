@@ -1,7 +1,7 @@
 {
   "name": "cwallet-translate",
-  "version": "0.3.4",
-  "description": "",
+  "version": "0.3.6",
+  "description": "A language translation tool based on OpenAI",
   "author": "maybe",
   "packageManager": "yarn@1.22.22",
   "types": "./index.d.ts",
