@@ -1,6 +1,6 @@
 {
   "name": "cwallet-translate",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "",
   "author": "maybe",
   "packageManager": "yarn@1.22.22",
@@ -28,8 +28,8 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "import": "./index.js",
+      "require": "./index.js"
     }
   },
   "dependencies": {
