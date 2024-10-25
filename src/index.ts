@@ -28,6 +28,10 @@ import {
 } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const DEFAULT_OPENAI_CONFIG: IOpenaiConfig = {
   model: "gpt-4o",
@@ -46,11 +50,13 @@ export class CwalletTranslate {
 
   constructor(params: ICwalletTranslateParams) {
     this.OPENAI_KEY = params.key;
-    this.CACHE_ROOT_PATH = params.cacheFileRootPath;
-    this.ENTRY_ROOT_PATH = params.fileRootPath;
+    this.CACHE_ROOT_PATH = path.resolve(__dirname, params.cacheFileRootPath);
+    this.ENTRY_ROOT_PATH = path.resolve(__dirname, params.fileRootPath);
     this.openaiConfig = params.openaiConfig ?? DEFAULT_OPENAI_CONFIG;
     this.SOURCE_LANGUAGE = params.sourceLanguage ?? "en";
-    this.OUTPUT_ROOT_PATH = params.outputRootPath;
+    this.OUTPUT_ROOT_PATH = params.outputRootPath
+      ? path.resolve(__dirname, params.outputRootPath)
+      : undefined;
     this.fineTune = params.fineTune;
     this.languages = params.languages ?? [];
     this.createOpenAIClient();
@@ -59,7 +65,10 @@ export class CwalletTranslate {
   get supportLanguages() {
     return Object.entries(SUPPORT_LANGUAGE_MAP)
       .map(([key, val]) => val)
-      .filter(({ code }) => this.languages.includes(code));
+      .filter(
+        ({ code }) =>
+          this.languages.includes(code) || code === this.SOURCE_LANGUAGE
+      );
   }
 
   get outputPath() {
@@ -323,7 +332,7 @@ export class CwalletTranslate {
     const { folderName, fileName, jsonMap, translateFilePath } = params;
     if (Object.values(jsonMap).length === 0) {
       await fs.writeFileSync(
-        path.resolve(`${this.ENTRY_ROOT_PATH}/${folderName}/${fileName}`),
+        path.join(`${this.outputPath}/${folderName}/${fileName}`),
         JSON.stringify({}, null, 2),
         "utf8"
       );

@@ -16,6 +16,9 @@ import { chunkArray, getRandomNumber, notExistsToCreateFile, readFileOfDirSync, 
 import { getCacheFileSync, registerLanguageCacheFile, translateJSONDiffToJson, } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const DEFAULT_OPENAI_CONFIG = {
     model: "gpt-4o",
 };
@@ -220,7 +223,7 @@ export class CwalletTranslate {
         this.outputLanguageFile = (params) => __awaiter(this, void 0, void 0, function* () {
             const { folderName, fileName, jsonMap, translateFilePath } = params;
             if (Object.values(jsonMap).length === 0) {
-                yield fs.writeFileSync(path.resolve(`${this.ENTRY_ROOT_PATH}/${folderName}/${fileName}`), JSON.stringify({}, null, 2), "utf8");
+                yield fs.writeFileSync(path.join(`${this.outputPath}/${folderName}/${fileName}`), JSON.stringify({}, null, 2), "utf8");
                 return;
             }
             //创建输出文件夹
@@ -246,11 +249,13 @@ export class CwalletTranslate {
             });
         });
         this.OPENAI_KEY = params.key;
-        this.CACHE_ROOT_PATH = params.cacheFileRootPath;
-        this.ENTRY_ROOT_PATH = params.fileRootPath;
+        this.CACHE_ROOT_PATH = path.resolve(__dirname, params.cacheFileRootPath);
+        this.ENTRY_ROOT_PATH = path.resolve(__dirname, params.fileRootPath);
         this.openaiConfig = (_a = params.openaiConfig) !== null && _a !== void 0 ? _a : DEFAULT_OPENAI_CONFIG;
         this.SOURCE_LANGUAGE = (_b = params.sourceLanguage) !== null && _b !== void 0 ? _b : "en";
-        this.OUTPUT_ROOT_PATH = params.outputRootPath;
+        this.OUTPUT_ROOT_PATH = params.outputRootPath
+            ? path.resolve(__dirname, params.outputRootPath)
+            : undefined;
         this.fineTune = params.fineTune;
         this.languages = (_c = params.languages) !== null && _c !== void 0 ? _c : [];
         this.createOpenAIClient();
@@ -258,7 +263,7 @@ export class CwalletTranslate {
     get supportLanguages() {
         return Object.entries(SUPPORT_LANGUAGE_MAP)
             .map(([key, val]) => val)
-            .filter(({ code }) => this.languages.includes(code));
+            .filter(({ code }) => this.languages.includes(code) || code === this.SOURCE_LANGUAGE);
     }
     get outputPath() {
         var _a;
