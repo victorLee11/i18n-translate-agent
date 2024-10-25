@@ -1,13 +1,17 @@
 import { OpenAI } from "openai";
 import { ICwalletTranslateParams, IJson, IOpenaiConfig, IOutputLanguageFile, ISingleTranslate, ITranslateChat, ITranslateChatResponse, SupportLanguageType } from "./types";
 export declare class CwalletTranslate {
+    /** open ai api key  */
     private OPENAI_KEY;
+    /** */
     CACHE_ROOT_PATH: string;
     ENTRY_ROOT_PATH: string;
+    /** default en */
     SOURCE_LANGUAGE: SupportLanguageType;
     OUTPUT_ROOT_PATH: string | undefined;
     languages: SupportLanguageType[];
     client: OpenAI | null;
+    /** default model gpt-4o */
     openaiConfig: IOpenaiConfig;
     fineTune: string[];
     constructor(params: ICwalletTranslateParams);
@@ -15,7 +19,9 @@ export declare class CwalletTranslate {
     get outputPath(): string;
     searchLanguage(code: SupportLanguageType): import("./types").ILanguage | undefined;
     createOpenAIClient: () => void;
-    /** 翻译入口文件的所有支持的语言文件夹和其中的文件 */
+    /**
+     * 翻译入口文件的所有支持的语言文件夹和其中的文件
+     */
     translate: () => Promise<void>;
     /**
      * 翻译单个文件

@@ -31,7 +31,9 @@ export class CwalletTranslate {
             });
             this.client = client;
         };
-        /** 翻译入口文件的所有支持的语言文件夹和其中的文件 */
+        /**
+         * 翻译入口文件的所有支持的语言文件夹和其中的文件
+         */
         this.translate = () => __awaiter(this, void 0, void 0, function* () {
             console.log("🚀 开始翻译");
             console.log(`🚀 使用的模型: ${this.openaiConfig.model} 🚀`);
@@ -39,6 +41,7 @@ export class CwalletTranslate {
             const translateFolderPath = path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE);
             // 翻译源语言问价夹下的所有json文件
             const translateFolders = yield readFileOfDirSync(translateFolderPath);
+            console.log("🚀 ~ 需要翻译语言的文件:", translateFolders);
             // 创建进度条
             const multiBar = new cliProgress.MultiBar({
                 clearOnComplete: false,
@@ -85,8 +88,6 @@ export class CwalletTranslate {
             /** 待翻译的文件名 */
             fileName, translateJson, multiBar, callback, } = params;
             try {
-                /** 待翻译的文件路径 */
-                const translateFilePath = path.join(this.ENTRY_ROOT_PATH, language, fileName);
                 // 等待翻译的数组
                 const jsonMap = {};
                 // 生成chat循环代码
@@ -109,7 +110,6 @@ export class CwalletTranslate {
                     jsonMap,
                     folderName: language,
                     fileName,
-                    translateFilePath,
                 });
                 callback && callback();
             }
@@ -209,7 +209,6 @@ export class CwalletTranslate {
                         jsonMap: {},
                         folderName: language,
                         fileName,
-                        translateFilePath,
                     });
                 }
                 return;
@@ -221,7 +220,7 @@ export class CwalletTranslate {
          * @param {Object} jsonMap
          */
         this.outputLanguageFile = (params) => __awaiter(this, void 0, void 0, function* () {
-            const { folderName, fileName, jsonMap, translateFilePath } = params;
+            const { folderName, fileName, jsonMap } = params;
             const outputFilePath = path.join(this.outputPath, folderName, fileName);
             //创建输出文件夹
             notExistsToCreateFile(this.outputPath);
@@ -248,13 +247,11 @@ export class CwalletTranslate {
             });
         });
         this.OPENAI_KEY = params.key;
-        this.CACHE_ROOT_PATH = path.resolve(__dirname, params.cacheFileRootPath);
-        this.ENTRY_ROOT_PATH = path.resolve(__dirname, params.fileRootPath);
+        this.CACHE_ROOT_PATH = params.cacheFileRootPath;
+        this.ENTRY_ROOT_PATH = params.fileRootPath;
         this.openaiConfig = (_a = params.openaiConfig) !== null && _a !== void 0 ? _a : DEFAULT_OPENAI_CONFIG;
         this.SOURCE_LANGUAGE = (_b = params.sourceLanguage) !== null && _b !== void 0 ? _b : "en";
-        this.OUTPUT_ROOT_PATH = params.outputRootPath
-            ? path.resolve(__dirname, params.outputRootPath)
-            : undefined;
+        this.OUTPUT_ROOT_PATH = params.outputRootPath;
         this.fineTune = params.fineTune;
         this.languages = (_c = params.languages) !== null && _c !== void 0 ? _c : [];
         this.createOpenAIClient();

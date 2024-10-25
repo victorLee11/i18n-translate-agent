@@ -28,8 +28,6 @@ import {
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
 
-const __dirname = process.cwd();
-
 const DEFAULT_OPENAI_CONFIG: IOpenaiConfig = {
   model: "gpt-4o",
 };
