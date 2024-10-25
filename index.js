@@ -16,9 +16,7 @@ import { chunkArray, getRandomNumber, notExistsToCreateFile, readFileOfDirSync, 
 import { getCacheFileSync, registerLanguageCacheFile, translateJSONDiffToJson, } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = process.cwd();
 const DEFAULT_OPENAI_CONFIG = {
     model: "gpt-4o",
 };
@@ -37,8 +35,10 @@ export class CwalletTranslate {
         this.translate = () => __awaiter(this, void 0, void 0, function* () {
             console.log("🚀 ------------------------- translate starts ------------------------- 🚀");
             const translateFolderPath = path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE);
+            console.log("🚀 ~ translateFolderPath:", translateFolderPath);
             // 翻译源语言问价夹下的所有json文件
             const translateFolders = yield readFileOfDirSync(translateFolderPath);
+            console.log("🚀 ~ translateFolders:", translateFolders);
             // 创建进度条
             const multiBar = new cliProgress.MultiBar({
                 clearOnComplete: false,

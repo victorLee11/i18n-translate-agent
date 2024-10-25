@@ -6,7 +6,6 @@ import cliProgress from "cli-progress";
 import {
   ICwalletTranslateParams,
   IJson,
-  ILanguage,
   IOpenaiConfig,
   IOutputLanguageFile,
   ISingleTranslate,
@@ -28,10 +27,8 @@ import {
 } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = process.cwd();
 
 const DEFAULT_OPENAI_CONFIG: IOpenaiConfig = {
   model: "gpt-4o",

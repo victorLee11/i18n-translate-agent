@@ -1,6 +1,6 @@
 {
   "name": "cwallet-translate",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "",
   "author": "maybe",
   "publishConfig": {
@@ -24,11 +24,11 @@
     "compile": "tsc"
   },
   "dependencies": {
+    "@types/cli-progress": "^3.11.6",
     "ansi-colors": "^4.1.3",
     "cli-progress": "^3.12.0",
     "openai": "^4.68.1",
-    "ts-node": "^10.9.2",
-    "@types/cli-progress": "^3.11.6"
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/node": "^22.7.9",
