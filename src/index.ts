@@ -35,25 +35,27 @@ const DEFAULT_OPENAI_CONFIG: IOpenaiConfig = {
 };
 
 export class CwalletTranslate {
+  /** open ai api key  */
   private OPENAI_KEY: string;
+  /** */
   CACHE_ROOT_PATH: string;
   ENTRY_ROOT_PATH: string;
+  /** default en */
   SOURCE_LANGUAGE: SupportLanguageType;
   OUTPUT_ROOT_PATH: string | undefined;
   languages: SupportLanguageType[];
   client: OpenAI | null = null;
+  /** default model gpt-4o */
   openaiConfig: IOpenaiConfig;
   fineTune: string[];
 
   constructor(params: ICwalletTranslateParams) {
     this.OPENAI_KEY = params.key;
-    this.CACHE_ROOT_PATH = path.resolve(__dirname, params.cacheFileRootPath);
-    this.ENTRY_ROOT_PATH = path.resolve(__dirname, params.fileRootPath);
+    this.CACHE_ROOT_PATH = params.cacheFileRootPath;
+    this.ENTRY_ROOT_PATH = params.fileRootPath;
     this.openaiConfig = params.openaiConfig ?? DEFAULT_OPENAI_CONFIG;
     this.SOURCE_LANGUAGE = params.sourceLanguage ?? "en";
-    this.OUTPUT_ROOT_PATH = params.outputRootPath
-      ? path.resolve(__dirname, params.outputRootPath)
-      : undefined;
+    this.OUTPUT_ROOT_PATH = params.outputRootPath;
     this.fineTune = params.fineTune;
     this.languages = params.languages ?? [];
     this.createOpenAIClient();
@@ -84,7 +86,9 @@ export class CwalletTranslate {
 
     this.client = client;
   };
-  /** 翻译入口文件的所有支持的语言文件夹和其中的文件 */
+  /**
+   * 翻译入口文件的所有支持的语言文件夹和其中的文件
+   */
   translate = async () => {
     console.log("🚀 开始翻译");
     console.log(`🚀 使用的模型: ${this.openaiConfig.model} 🚀`);
@@ -96,6 +100,7 @@ export class CwalletTranslate {
     );
     // 翻译源语言问价夹下的所有json文件
     const translateFolders = await readFileOfDirSync(translateFolderPath);
+    console.log("🚀 ~ 需要翻译语言的文件:", translateFolders);
     // 创建进度条
     const multiBar = new cliProgress.MultiBar(
       {
@@ -160,13 +165,6 @@ export class CwalletTranslate {
     } = params;
 
     try {
-      /** 待翻译的文件路径 */
-      const translateFilePath = path.join(
-        this.ENTRY_ROOT_PATH,
-        language,
-        fileName
-      );
-
       // 等待翻译的数组
       const jsonMap: IJson = {};
 
@@ -196,7 +194,6 @@ export class CwalletTranslate {
         jsonMap,
         folderName: language,
         fileName,
-        translateFilePath,
       });
       callback && callback();
     } catch (error) {
@@ -311,7 +308,6 @@ export class CwalletTranslate {
           jsonMap: {},
           folderName: language,
           fileName,
-          translateFilePath,
         });
       }
       return;
@@ -324,7 +320,7 @@ export class CwalletTranslate {
    * @param {Object} jsonMap
    */
   outputLanguageFile = async (params: IOutputLanguageFile) => {
-    const { folderName, fileName, jsonMap, translateFilePath } = params;
+    const { folderName, fileName, jsonMap } = params;
     const outputFilePath = path.join(this.outputPath, folderName, fileName);
     //创建输出文件夹
     notExistsToCreateFile(this.outputPath);

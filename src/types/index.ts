@@ -60,7 +60,6 @@ export interface IOutputLanguageFile {
   folderName: SupportLanguageType;
   fileName: string;
   jsonMap: IJson;
-  translateFilePath: string;
 }
 
 export interface IRegisterLanguageCacheFile {
