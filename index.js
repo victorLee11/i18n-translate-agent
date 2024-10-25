@@ -33,12 +33,12 @@ export class CwalletTranslate {
         };
         /** 翻译入口文件的所有支持的语言文件夹和其中的文件 */
         this.translate = () => __awaiter(this, void 0, void 0, function* () {
-            console.log("🚀 ------------------------- translate starts ------------------------- 🚀");
+            console.log("🚀 开始翻译");
+            console.log(`🚀 使用的模型: ${this.openaiConfig.model} 🚀`);
+            console.log(`🚀 微调: ${this.fineTune} 🚀`);
             const translateFolderPath = path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE);
-            console.log("🚀 ~ translateFolderPath:", translateFolderPath);
             // 翻译源语言问价夹下的所有json文件
             const translateFolders = yield readFileOfDirSync(translateFolderPath);
-            console.log("🚀 ~ translateFolders:", translateFolders);
             // 创建进度条
             const multiBar = new cliProgress.MultiBar({
                 clearOnComplete: false,
@@ -71,7 +71,7 @@ export class CwalletTranslate {
                 yield Promise.all(chunk.map((fn) => fn()));
             }
             multiBar.stop();
-            console.log("🚀 ------------------------- translate end ------------------------- 🚀");
+            console.log("🚀 翻译完毕");
         });
         /**
          * 翻译单个文件
