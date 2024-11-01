@@ -1,6 +1,6 @@
 {
   "name": "cc-translate",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A language translation tool based on OpenAI",
   "author": "maybe",
   "packageManager": "yarn@1.22.22",
