@@ -1,7 +1,11 @@
 import path from "path";
 import fs from "fs";
 import { notExistsToCreateFile, readJsonFileSync } from "../utils.js";
-import { IJson, IRegisterLanguageCacheFile } from "../../types";
+import {
+  IGenerateCacheParams,
+  IJson,
+  IRegisterLanguageCacheFile,
+} from "../../types";
 
 /**
  * 和翻译缓存json文件对比 返回存在更改的json文件
@@ -67,4 +71,11 @@ export const registerLanguageCacheFile = async (
     JSON.stringify(cacheObject, null, 2),
     "utf8"
   );
+};
+
+/**
+ * 根据现有的源文件生成缓存
+ */
+export const generateCache = (params: IGenerateCacheParams) => {
+  const {} = params;
 };

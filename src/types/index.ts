@@ -115,3 +115,12 @@ export interface ITranslate {}
 export interface IOpenaiConfig {
   model: OpenAI.Chat.ChatModel;
 }
+
+export interface ITestParams {
+  key: string;
+  question: string;
+}
+
+export interface IGenerateCacheParams {
+
+}

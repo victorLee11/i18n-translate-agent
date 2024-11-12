@@ -1,0 +1,1 @@
+{"messages": [{"role": "system", "content": "你是一个翻译机器人"}, {"role": "user", "content": "将Reversal翻译成中文"}, {"role": "assistant", "content": "撤销"}]}

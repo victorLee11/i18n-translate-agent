@@ -1,4 +1,4 @@
-import { IJson, IRegisterLanguageCacheFile } from "../../types";
+import { IGenerateCacheParams, IJson, IRegisterLanguageCacheFile } from "../../types";
 /**
  * 和翻译缓存json文件对比 返回存在更改的json文件
  * @param {object} cacheObject 已经缓存的对象
@@ -17,4 +17,8 @@ export declare const getCacheFileSync: (filePath: string) => Promise<IJson>;
  * @param {string} language
  */
 export declare const registerLanguageCacheFile: (params: IRegisterLanguageCacheFile) => Promise<void>;
+/**
+ * 根据现有的源文件生成缓存
+ */
+export declare const generateCache: (params: IGenerateCacheParams) => void;
 //# sourceMappingURL=index.d.ts.map
