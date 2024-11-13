@@ -16,6 +16,8 @@ import { chunkArray, getRandomNumber, notExistsToCreateFile, readFileOfDirSync, 
 import { getCacheFileSync, registerLanguageCacheFile, translateJSONDiffToJson, } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
+export { testCompletions } from "./test/index.js";
+export { generateCache, deleteBatchCache } from "./lib/cache/index.js";
 const DEFAULT_OPENAI_CONFIG = {
     model: "gpt-4o",
 };

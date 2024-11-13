@@ -72,3 +72,19 @@ export function chunkArray<T extends object>(array: T[], chunkSize: number) {
   }
   return result;
 }
+
+export function intersection<T>(arr1: T[], arr2: T[]): T[] {
+  const setA = new Set(arr1);
+  const setB = new Set(arr2);
+  // 创建一个新的 Set 来存储交集
+  let intersectionSet = new Set<T>();
+
+  // 遍历较小的集合，检查每个元素是否在另一个集合中
+  for (let item of setA) {
+    if (setB.has(item)) {
+      intersectionSet.add(item);
+    }
+  }
+
+  return [...intersectionSet];
+}

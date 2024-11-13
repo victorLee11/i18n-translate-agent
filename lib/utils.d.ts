@@ -22,4 +22,5 @@ export declare const getRandomNumber: (min: number, max: number) => number;
 export declare const isDirectoryPath: (path: string) => boolean;
 export declare const readFileOfDirSync: (dirPath: string) => string[];
 export declare function chunkArray<T extends object>(array: T[], chunkSize: number): T[][];
+export declare function intersection<T>(arr1: T[], arr2: T[]): T[];
 //# sourceMappingURL=utils.d.ts.map

@@ -1,4 +1,4 @@
-import { IGenerateCacheParams, IJson, IRegisterLanguageCacheFile } from "../../types";
+import { IDeleteSingleCacheParams, IGenerateCacheParams, IJson, IRegisterLanguageCacheFile } from "../../types";
 /**
  * 和翻译缓存json文件对比 返回存在更改的json文件
  * @param {object} cacheObject 已经缓存的对象
@@ -20,5 +20,10 @@ export declare const registerLanguageCacheFile: (params: IRegisterLanguageCacheF
 /**
  * 根据现有的源文件生成缓存
  */
-export declare const generateCache: (params: IGenerateCacheParams) => void;
+export declare const generateCache: (params: IGenerateCacheParams) => Promise<void>;
+/**
+ * 批量删除指定语言的缓存信息
+ * @param params
+ */
+export declare const deleteBatchCache: (params: IDeleteSingleCacheParams) => void;
 //# sourceMappingURL=index.d.ts.map

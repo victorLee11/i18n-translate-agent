@@ -1,5 +1,7 @@
 import { OpenAI } from "openai";
 import { ICwalletTranslateParams, IJson, IOpenaiConfig, IOutputLanguageFile, ISingleTranslate, ITranslateChat, ITranslateChatResponse, SupportLanguageType } from "./types";
+export { testCompletions } from "./test/index.js";
+export { generateCache, deleteBatchCache } from "./lib/cache/index.js";
 export declare class CwalletTranslate {
     /** open ai api key  */
     private OPENAI_KEY;

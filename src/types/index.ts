@@ -122,5 +122,15 @@ export interface ITestParams {
 }
 
 export interface IGenerateCacheParams {
+  sourceFolderPath: string;
+  languages: SupportLanguageType[];
+  exportFolderPath: string;
+}
 
+export interface IDeleteSingleCacheParams {
+  keys: string[];
+  cacheFolderPath: string;
+  cacheFileName: string;
+  /** 不传默认删除所有 */
+  languages?: SupportLanguageType[];
 }
