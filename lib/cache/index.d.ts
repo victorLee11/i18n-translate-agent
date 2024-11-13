@@ -18,7 +18,7 @@ export declare const getCacheFileSync: (filePath: string) => Promise<IJson>;
  */
 export declare const registerLanguageCacheFile: (params: IRegisterLanguageCacheFile) => Promise<void>;
 /**
- * 根据现有的源文件生成缓存
+ * 根据已翻译文件生成缓存
  */
 export declare const generateCache: (params: IGenerateCacheParams) => Promise<void>;
 /**

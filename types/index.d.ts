@@ -80,6 +80,7 @@ export interface ITestParams {
 }
 export interface IGenerateCacheParams {
     sourceFolderPath: string;
+    sourceLanguage: SupportLanguageType;
     languages: SupportLanguageType[];
     exportFolderPath: string;
 }
@@ -89,5 +90,10 @@ export interface IDeleteSingleCacheParams {
     cacheFileName: string;
     /** 不传默认删除所有 */
     languages?: SupportLanguageType[];
+}
+export interface ICacheFile {
+    fileName: string;
+    filePath: string;
+    data: Record<string, string>;
 }
 //# sourceMappingURL=index.d.ts.map

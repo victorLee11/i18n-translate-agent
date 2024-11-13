@@ -8,8 +8,9 @@ import { deleteBatchCache, generateCache } from "./index.js";
 //   languages: [],
 // });
 
-// generateCache({
-//   sourceFolderPath: path.resolve("./src/langs/en"),
-//   exportFolderPath: path.resolve("./src/cache"),
-//   languages: ["ja", "ar", "bn", "de", "id"],
-// });
+generateCache({
+  sourceFolderPath: path.resolve("./src/langs"),
+  sourceLanguage: "en",
+  exportFolderPath: path.resolve("./src/cache"),
+  languages: ["ja", "zh-CN"],
+});

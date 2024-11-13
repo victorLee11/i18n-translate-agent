@@ -6,6 +6,7 @@ import {
   readJsonFileSync,
 } from "../utils.js";
 import {
+  ICacheFile,
   IDeleteSingleCacheParams,
   IGenerateCacheParams,
   IJson,
@@ -79,24 +80,44 @@ export const registerLanguageCacheFile = async (
 };
 
 /**
- * 根据现有的源文件生成缓存
+ * 根据已翻译文件生成缓存
  */
 export const generateCache = async (params: IGenerateCacheParams) => {
-  // 获取待翻译的源文件夹
-  // 读取文件夹下的所有文件
-  // 复制文件中的所有内容
-  // 遍历需要翻译的语言 生成缓存文件
-  const { sourceFolderPath, languages, exportFolderPath } = params;
+  const { sourceFolderPath, languages, exportFolderPath, sourceLanguage } =
+    params;
 
   if (!languages || !Array.isArray(languages) || languages.length === 0) return;
 
-  const fileData = readAllFilesOfFolder(sourceFolderPath);
-  fileData.forEach(({ fileName, data }) => {
-    languages.forEach((language) => {
+  // 读取源文件夹下的所有文件
+  const sourceFileData = readAllFilesOfFolder(
+    path.resolve(sourceFolderPath, sourceLanguage)
+  );
+  // 源文件数据map
+  const sourceFileMap: Record<string, ICacheFile> = {};
+
+  sourceFileData.forEach((item) => {
+    sourceFileMap[item.fileName] = item;
+  });
+
+  languages.forEach((language) => {
+    // 获取当前语言的文件数据
+    const currentFileData = readAllFilesOfFolder(
+      path.join(sourceFolderPath, language)
+    );
+
+    currentFileData.forEach(({ data, fileName }) => {
+      const translated: Record<string, string> = {};
+      // 遍历文件中的已经翻译的内容
+      Object.entries(data).forEach(([key, value]) => {
+        if (value) {
+          translated[key] = sourceFileMap[fileName].data[key];
+        }
+      });
+
       notExistsToCreateFile(path.resolve(exportFolderPath, language));
       fs.writeFileSync(
         path.resolve(exportFolderPath, language, fileName),
-        data,
+        JSON.stringify(translated, null, 2),
         "utf-8"
       );
     });
@@ -109,6 +130,7 @@ export const generateCache = async (params: IGenerateCacheParams) => {
  */
 const readAllFilesOfFolder = (sourceFolderPath: string) => {
   try {
+    if (!fs.existsSync(sourceFolderPath)) return [];
     const sourceFiles = fs.readdirSync(sourceFolderPath);
     return sourceFiles.map((fileName) => {
       return readFile(sourceFolderPath, fileName);
@@ -119,15 +141,16 @@ const readAllFilesOfFolder = (sourceFolderPath: string) => {
   }
 };
 
-const readFile = (sourceFolderPath: string, fileName: string) => {
+const readFile = (sourceFolderPath: string, fileName: string): ICacheFile => {
   const filePath = path.resolve(sourceFolderPath, fileName);
 
   try {
     const jsonData = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(jsonData) as Record<string, string>;
     return {
       fileName,
       filePath,
-      data: jsonData,
+      data,
     };
   } catch (error) {
     console.error("read file error:", error);
@@ -135,7 +158,7 @@ const readFile = (sourceFolderPath: string, fileName: string) => {
     return {
       fileName,
       filePath,
-      data: "{}",
+      data: {},
     };
   }
 };
