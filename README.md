@@ -29,8 +29,8 @@ pnpm add i18n-translate-agent
 ## 🚀 Quick Start
 
 ```javascript
-import { CwalletTranslate } from 'i18n-translate-agent';
-import path from 'path';
+import { CwalletTranslate } from "i18n-translate-agent";
+import path from "path";
 
 // Get current directory
 const __dirname = import.meta.dirname;
@@ -38,50 +38,50 @@ const __dirname = import.meta.dirname;
 // Create translation instance
 const translator = new CwalletTranslate({
   key: "your-openai-api-key",
-  sourceLanguage: 'en',
-  
+  sourceLanguage: "en",
+
   // Cache file path for optimized re-runs
-  cacheFileRootPath: path.resolve(__dirname, './cache'),
-  
+  cacheFileRootPath: path.resolve(__dirname, "./cache"),
+
   // Source translation files path
-  fileRootPath: path.resolve(__dirname, './locales'),
-  
+  fileRootPath: path.resolve(__dirname, "./locales"),
+
   // Fine-tune translation context for better accuracy
   fineTune: [
-    'We are blockchain developers',
-    'This is a cryptocurrency wallet application',
-    'Technical terms should be kept consistent'
+    "We are blockchain developers",
+    "This is a cryptocurrency wallet application",
+    "Technical terms should be kept consistent",
   ],
-  
+
   // Target languages to translate to
   languages: [
-    'zh-CN', // Simplified Chinese
-    'zh-TW', // Traditional Chinese
-    'ja',    // Japanese
-    'ko',    // Korean
-    'fr',    // French
-    'de',    // German
-    'es',    // Spanish
-    'pt',    // Portuguese
-    'ru',    // Russian
-    'ar'     // Arabic
+    "zh-CN", // Simplified Chinese
+    "zh-TW", // Traditional Chinese
+    "ja", // Japanese
+    "ko", // Korean
+    "fr", // French
+    "de", // German
+    "es", // Spanish
+    "pt", // Portuguese
+    "ru", // Russian
+    "ar", // Arabic
   ],
-  
+
   // Output directory for translated files
-  outputRootPath: path.resolve(__dirname, './locales'),
-  
+  outputRootPath: path.resolve(__dirname, "./locales"),
+
   // Optional: Custom OpenAI configuration
   openaiClientConfig: {
     apiKey: "your-openai-api-key",
-    baseURL: "https://api.openai.com/v1" // Optional: custom endpoint
+    baseURL: "https://api.openai.com/v1", // Optional: custom endpoint
   },
-  
+
   // Optional: Custom chat completion parameters
   chatCompletionCreateParams: {
     model: "gpt-4o",
     temperature: 0.3,
-    max_tokens: 1000
-  }
+    max_tokens: 1000,
+  },
 });
 
 // Start translation
@@ -109,6 +109,7 @@ your-project/
 ### Example JSON Files
 
 **locales/en/common.json**
+
 ```json
 {
   "welcome": "Welcome",
@@ -122,6 +123,7 @@ your-project/
 After translation, you'll get:
 
 **locales/zh-CN/common.json**
+
 ```json
 {
   "welcome": "欢迎",
@@ -134,17 +136,17 @@ After translation, you'll get:
 
 ## ⚙️ Configuration Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `key` | `string` | ✅ | OpenAI API key |
-| `sourceLanguage` | `string` | ❌ | Source language code (default: 'en') |
-| `languages` | `string[]` | ✅ | Target language codes to translate to |
-| `fileRootPath` | `string` | ✅ | Path to source translation files |
-| `cacheFileRootPath` | `string` | ✅ | Path for cache files |
-| `outputRootPath` | `string` | ❌ | Output path (default: same as fileRootPath) |
-| `fineTune` | `string[]` | ❌ | Context strings for better translation accuracy |
-| `openaiClientConfig` | `ClientOptions` | ❌ | Custom OpenAI client configuration |
-| `chatCompletionCreateParams` | `ChatCompletionCreateParams` | ❌ | Custom chat completion parameters |
+| Option                       | Type                         | Required | Description                                     |
+| ---------------------------- | ---------------------------- | -------- | ----------------------------------------------- |
+| `key`                        | `string`                     | ✅       | OpenAI API key                                  |
+| `sourceLanguage`             | `string`                     | ❌       | Source language code (default: 'en')            |
+| `languages`                  | `string[]`                   | ✅       | Target language codes to translate to           |
+| `fileRootPath`               | `string`                     | ✅       | Path to source translation files                |
+| `cacheFileRootPath`          | `string`                     | ✅       | Path for cache files                            |
+| `outputRootPath`             | `string`                     | ❌       | Output path (default: same as fileRootPath)     |
+| `fineTune`                   | `string[]`                   | ❌       | Context strings for better translation accuracy |
+| `openaiClientConfig`         | `ClientOptions`              | ❌       | Custom OpenAI client configuration              |
+| `chatCompletionCreateParams` | `ChatCompletionCreateParams` | ❌       | Custom chat completion parameters               |
 
 ## 🌍 Supported Languages
 
@@ -174,11 +176,11 @@ The agent supports all major languages. Use standard language codes:
 const translator = new CwalletTranslate({
   // ... other options
   fineTune: [
-    'This is a financial application',
-    'Cryptocurrency and blockchain terminology should be preserved',
-    'Keep technical terms in English when appropriate',
-    'Maintain formal tone throughout'
-  ]
+    "This is a financial application",
+    "Cryptocurrency and blockchain terminology should be preserved",
+    "Keep technical terms in English when appropriate",
+    "Maintain formal tone throughout",
+  ],
 });
 ```
 
@@ -187,22 +189,22 @@ const translator = new CwalletTranslate({
 ```javascript
 try {
   await translator.translate();
-  console.log('Translation completed successfully!');
+  console.log("Translation completed successfully!");
 } catch (error) {
-  console.error('Translation failed:', error);
+  console.error("Translation failed:", error);
 }
 ```
 
 ### Cache Management
 
 ```javascript
-import { generateCache, deleteBatchCache } from 'i18n-translate-agent';
+import { generateCache, deleteBatchCache } from "i18n-translate-agent";
 
 // Generate cache for specific languages
-await generateCache(['zh-CN', 'ja'], '/path/to/cache');
+await generateCache(["zh-CN", "ja"], "/path/to/cache");
 
 // Clear cache for specific languages
-await deleteBatchCache(['zh-CN', 'ja'], '/path/to/cache');
+await deleteBatchCache(["zh-CN", "ja"], "/path/to/cache");
 ```
 
 ## 📊 Progress Tracking
