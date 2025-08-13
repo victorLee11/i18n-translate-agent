@@ -1,12 +1,11 @@
 import path from "path";
 import fs from "fs";
 import colors from "ansi-colors";
-import { OpenAI } from "openai";
+import { OpenAI, ClientOptions } from "openai";
 import cliProgress from "cli-progress";
 import {
   ICwalletTranslateParams,
   IJson,
-  IOpenaiConfig,
   IOutputLanguageFile,
   ISingleTranslate,
   ITranslateChat,
@@ -27,13 +26,11 @@ import {
 } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
+import { ChatCompletionCreateParams } from "openai/resources";
 
-export { testCompletions } from "./test/index.js";
 export { generateCache, deleteBatchCache } from "./lib/cache/index.js";
 
-const DEFAULT_OPENAI_CONFIG: IOpenaiConfig = {
-  model: "gpt-4o",
-};
+const DEFAULT_OPENAI_CONFIG: ClientOptions = {};
 
 export class CwalletTranslate {
   /** open ai api key  */
@@ -47,14 +44,21 @@ export class CwalletTranslate {
   languages: SupportLanguageType[];
   client: OpenAI | null = null;
   /** default model gpt-4o */
-  openaiConfig: IOpenaiConfig;
+  openaiClientConfig: ClientOptions;
   fineTune: string[];
+  chatCompletionCreateParams: ChatCompletionCreateParams;
 
   constructor(params: ICwalletTranslateParams) {
     this.OPENAI_KEY = params.key;
     this.CACHE_ROOT_PATH = params.cacheFileRootPath;
     this.ENTRY_ROOT_PATH = params.fileRootPath;
-    this.openaiConfig = params.openaiConfig ?? DEFAULT_OPENAI_CONFIG;
+    this.openaiClientConfig =
+      params.openaiClientConfig ?? DEFAULT_OPENAI_CONFIG;
+    this.chatCompletionCreateParams =
+      params.chatCompletionCreateParams ??
+      ({
+        model: "gpt-4o",
+      } as ChatCompletionCreateParams);
     this.SOURCE_LANGUAGE = params.sourceLanguage ?? "en";
     this.OUTPUT_ROOT_PATH = params.outputRootPath;
     this.fineTune = params.fineTune;
@@ -80,29 +84,29 @@ export class CwalletTranslate {
   }
 
   createOpenAIClient = () => {
-    /** 初始化openAi */
-    const client = new OpenAI({
-      apiKey: this.OPENAI_KEY,
-    });
+    /** Initialize OpenAI */
+    const client = new OpenAI(this.openaiClientConfig);
 
     this.client = client;
   };
   /**
-   * 翻译入口文件的所有支持的语言文件夹和其中的文件
+   * Translate all supported language folders and files in the entry file
    */
   translate = async () => {
-    console.log("🚀 开始翻译");
-    console.log(`🚀 使用的模型: ${this.openaiConfig.model} 🚀`);
-    console.log(`🚀 微调: ${this.fineTune} 🚀`);
+    console.log("🚀 Starting translation");
+    console.log(
+      `🚀 Model being used: ${this.chatCompletionCreateParams.model} 🚀`
+    );
+    console.log(`🚀 Fine-tuning: ${this.fineTune} 🚀`);
 
     const translateFolderPath = path.join(
       this.ENTRY_ROOT_PATH,
       this.SOURCE_LANGUAGE
     );
-    // 翻译源语言问价夹下的所有json文件
+    // Translate all json files under the source language folder
     const translateFolders = await readFileOfDirSync(translateFolderPath);
-    console.log("🚀 ~ 需要翻译语言的文件:", translateFolders);
-    // 创建进度条
+    console.log("🚀 ~ Files to be translated:", translateFolders);
+    // Create progress bar
     const multiBar = new cliProgress.MultiBar(
       {
         clearOnComplete: false,
@@ -118,7 +122,7 @@ export class CwalletTranslate {
     const arr: (() => Promise<void>)[] = [];
 
     for (const item of this.supportLanguages) {
-      // 源语言不翻译
+      // Source language does not need translation
       if (item.code === this.SOURCE_LANGUAGE) continue;
       for (const fileName of translateFolders) {
         const translateJson = await this.getTranslateContent(
@@ -126,7 +130,7 @@ export class CwalletTranslate {
           fileName
         );
         if (!translateJson) {
-          console.log(`${item.code}:${fileName} 没有需要翻译的内容`);
+          console.log(`${item.code}:${fileName} has no content to translate`);
           continue;
         }
         arr.push(() =>
@@ -147,18 +151,18 @@ export class CwalletTranslate {
     }
 
     multiBar.stop();
-    console.log("🚀 翻译完毕");
+    console.log("🚀 Translation completed");
   };
   /**
-   * 翻译单个文件
+   * Translate a single file
    * @param params
    * @returns
    */
   singleTranslate = async (params: ISingleTranslate) => {
     const {
-      /** 待翻译的语言 */
+      /** Language to be translated */
       language,
-      /** 待翻译的文件名 */
+      /** File name to be translated */
       fileName,
       translateJson,
       multiBar,
@@ -166,10 +170,10 @@ export class CwalletTranslate {
     } = params;
 
     try {
-      // 等待翻译的数组
+      // Array waiting for translation
       const jsonMap: IJson = {};
 
-      // 生成chat循环代码
+      // Generate chat loop code
       const promiseList = Object.entries(translateJson).map(
         ([key, value], index) =>
           () =>
@@ -209,7 +213,7 @@ export class CwalletTranslate {
   };
 
   /**
-   * 使用open ai 进行翻译
+   * Use OpenAI for translation
    * @param {string} key
    * @param {string} value
    * @param {OpenAI} client
@@ -225,16 +229,17 @@ export class CwalletTranslate {
         const originLanguage = this.searchLanguage(this.SOURCE_LANGUAGE);
 
         if (!targetLanguage) {
-          throw new Error(`不支持的语言：${language}`);
+          throw new Error(`Unsupported language: ${language}`);
         }
 
         if (!originLanguage) {
-          throw new Error(`不支持的语言：${this.SOURCE_LANGUAGE}`);
+          throw new Error(`Unsupported language: ${this.SOURCE_LANGUAGE}`);
         }
 
         setTimeout(async () => {
           const chatCompletion = await this.client!.chat.completions.create({
-            model: this.openaiConfig?.model,
+            ...this.chatCompletionCreateParams,
+            stream: false,
             messages: [
               ...this.fineTune.map(
                 (val) =>
@@ -245,13 +250,13 @@ export class CwalletTranslate {
               ),
               {
                 role: "system",
-                content: `请将${originLanguage!.name}翻译成${
+                content: `Please translate ${originLanguage!.name} to ${
                   targetLanguage!.name
                 }`,
               },
               {
                 role: "system",
-                content: `翻译完成直接输出后对应意思的内容不要携带任何无关内容`,
+                content: `After translation is complete, directly output the corresponding meaning without any irrelevant content`,
               },
               {
                 role: "user",
@@ -277,7 +282,7 @@ export class CwalletTranslate {
     });
   };
   /**
-   * 对比缓存文件 获取需要翻译的内容
+   * Compare cache files to get content that needs translation
    * @param language
    * @param fileName
    * @returns
@@ -291,7 +296,7 @@ export class CwalletTranslate {
       this.SOURCE_LANGUAGE,
       fileName
     );
-    /** 缓存文件路径 */
+    /** Cache file path */
     const cacheFilePath = path.join(this.CACHE_ROOT_PATH, language, fileName);
     if (!fs.existsSync(translateFilePath)) {
       console.dir(`File not found: ${translateFilePath}`);
@@ -317,18 +322,18 @@ export class CwalletTranslate {
   };
 
   /**
-   * 输出语言文件
+   * Output language file
    * @param {Object} jsonMap
    */
   outputLanguageFile = async (params: IOutputLanguageFile) => {
     const { folderName, fileName, jsonMap } = params;
     const outputFilePath = path.join(this.outputPath, folderName, fileName);
-    //创建输出文件夹
+    // Create output folder
     notExistsToCreateFile(this.outputPath);
-    //创建输出的语言文件夹
+    // Create output language folder
     notExistsToCreateFile(`${this.outputPath}/${folderName}`);
     let oldJsonData: string = "";
-    // 检查是否存在文件
+    // Check if file exists
     if (!fs.existsSync(outputFilePath)) {
       oldJsonData = await fs.readFileSync(
         path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
@@ -346,7 +351,7 @@ export class CwalletTranslate {
       "utf8"
     );
 
-    // 注册缓存
+    // Register cache
     registerLanguageCacheFile({
       sourceFilePath: path.join(
         this.ENTRY_ROOT_PATH,

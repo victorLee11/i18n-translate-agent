@@ -1,10 +1,11 @@
 # cc-translate
-一个基于Chat GPT的翻译库 🚀
+
+一个基于 Chat GPT 的翻译库 🚀
 
 ## 特征
-- 支持通过一种源语言翻译出多国语言
-- 默认使用gpt-4o模型进行翻译，你也可以设置.gpt-4o性价比更高
 
+- 支持通过一种源语言翻译出多国语言
+- 默认使用 gpt-4o 模型进行翻译，你也可以设置.gpt-4o 性价比更高
 
 ## 安装
 
@@ -36,7 +37,7 @@ const client = new CwalletTranslate({
   // 翻译源文件路径
   fileRootPath: path.resolve(__dirname, './langs'),
   // 调整翻译语境，告诉gpt我们的翻译要求。提高翻译准确性！
-  fineTune: ['我们是一个区块链钱包', '请使用行业专业术语并更切合生活的翻译',....],
+  fineTune: ['We are blockchain developers/builders', 'We operate in the blockchain sector.',....],
   // 需要翻译的语言列表
   languages: [
     'zh-CN',

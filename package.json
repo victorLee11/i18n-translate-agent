@@ -1,8 +1,8 @@
 {
-  "name": "cc-translate",
+  "name": "i18n-translate-agent",
   "version": "0.5.1",
   "description": "A language translation tool based on OpenAI",
-  "author": "maybe",
+  "author": "ccpayment-v",
   "packageManager": "yarn@1.22.22",
   "types": "./index.d.ts",
   "main": "./index.mjs",
