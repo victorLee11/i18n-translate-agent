@@ -1,26 +1,33 @@
 {
   "name": "i18n-translate-agent",
-  "version": "0.5.1",
-  "description": "A language translation tool based on OpenAI",
-  "author": "ccpayment-v",
+  "version": "1.0.0",
+  "description": "An intelligent i18n translation agent powered by OpenAI, supporting automatic translation of JSON files with caching and progress tracking",
+  "author": "victorLee11",
   "packageManager": "yarn@1.22.22",
   "types": "./index.d.ts",
-  "main": "./index.mjs",
-  "module": "./index.mjs",
+  "main": "./index.js",
+  "module": "./index.js",
   "publishConfig": {
     "access": "public"
   },
   "keywords": [
-    "translate",
-    "openai"
+    "i18n",
+    "internationalization",
+    "translation",
+    "openai",
+    "chatgpt",
+    "multilingual",
+    "localization",
+    "json-translation",
+    "ai-translation"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cctip/cwallet-translate-script.git"
+    "url": "git+https://github.com/victorLee11/i18n-translate-agent.git"
   },
-  "homepage": "https://github.com/cctip/cwallet-translate-script",
-  "bugs": "https://github.com/xxx/cwallet-translate-script/issues",
+  "homepage": "https://github.com/victorLee11/i18n-translate-agent",
+  "bugs": "https://github.com/victorLee11/i18n-translate-agent/issues",
   "type": "module",
   "scripts": {
     "publish": "npx tsc && npm publish",
