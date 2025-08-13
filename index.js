@@ -16,34 +16,29 @@ import { chunkArray, getRandomNumber, notExistsToCreateFile, readFileOfDirSync, 
 import { getCacheFileSync, registerLanguageCacheFile, translateJSONDiffToJson, } from "./lib/cache/index.js";
 import { logErrorToFile } from "./lib/log/index.js";
 import { SUPPORT_LANGUAGE_MAP } from "./lib/support.js";
-export { testCompletions } from "./test/index.js";
 export { generateCache, deleteBatchCache } from "./lib/cache/index.js";
-const DEFAULT_OPENAI_CONFIG = {
-    model: "gpt-4o",
-};
+const DEFAULT_OPENAI_CONFIG = {};
 export class CwalletTranslate {
     constructor(params) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         this.client = null;
         this.createOpenAIClient = () => {
-            /** 初始化openAi */
-            const client = new OpenAI({
-                apiKey: this.OPENAI_KEY,
-            });
+            /** Initialize OpenAI */
+            const client = new OpenAI(this.openaiClientConfig);
             this.client = client;
         };
         /**
-         * 翻译入口文件的所有支持的语言文件夹和其中的文件
+         * Translate all supported language folders and files in the entry file
          */
         this.translate = () => __awaiter(this, void 0, void 0, function* () {
-            console.log("🚀 开始翻译");
-            console.log(`🚀 使用的模型: ${this.openaiConfig.model} 🚀`);
-            console.log(`🚀 微调: ${this.fineTune} 🚀`);
+            console.log("🚀 Starting translation");
+            console.log(`🚀 Model being used: ${this.chatCompletionCreateParams.model} 🚀`);
+            console.log(`🚀 Fine-tuning: ${this.fineTune} 🚀`);
             const translateFolderPath = path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE);
-            // 翻译源语言问价夹下的所有json文件
+            // Translate all json files under the source language folder
             const translateFolders = yield readFileOfDirSync(translateFolderPath);
-            console.log("🚀 ~ 需要翻译语言的文件:", translateFolders);
-            // 创建进度条
+            console.log("🚀 ~ Files to be translated:", translateFolders);
+            // Create progress bar
             const multiBar = new cliProgress.MultiBar({
                 clearOnComplete: false,
                 hideCursor: true,
@@ -53,13 +48,13 @@ export class CwalletTranslate {
             let promises = [];
             const arr = [];
             for (const item of this.supportLanguages) {
-                // 源语言不翻译
+                // Source language does not need translation
                 if (item.code === this.SOURCE_LANGUAGE)
                     continue;
                 for (const fileName of translateFolders) {
                     const translateJson = yield this.getTranslateContent(item.code, fileName);
                     if (!translateJson) {
-                        console.log(`${item.code}:${fileName} 没有需要翻译的内容`);
+                        console.log(`${item.code}:${fileName} has no content to translate`);
                         continue;
                     }
                     arr.push(() => this.singleTranslate({
@@ -75,23 +70,23 @@ export class CwalletTranslate {
                 yield Promise.all(chunk.map((fn) => fn()));
             }
             multiBar.stop();
-            console.log("🚀 翻译完毕");
+            console.log("🚀 Translation completed");
         });
         /**
-         * 翻译单个文件
+         * Translate a single file
          * @param params
          * @returns
          */
         this.singleTranslate = (params) => __awaiter(this, void 0, void 0, function* () {
             const { 
-            /** 待翻译的语言 */
+            /** Language to be translated */
             language, 
-            /** 待翻译的文件名 */
+            /** File name to be translated */
             fileName, translateJson, multiBar, callback, } = params;
             try {
-                // 等待翻译的数组
+                // Array waiting for translation
                 const jsonMap = {};
-                // 生成chat循环代码
+                // Generate chat loop code
                 const promiseList = Object.entries(translateJson).map(([key, value], index) => () => this.translateChat({
                     key,
                     value,
@@ -125,7 +120,7 @@ export class CwalletTranslate {
             }
         });
         /**
-         * 使用open ai 进行翻译
+         * Use OpenAI for translation
          * @param {string} key
          * @param {string} value
          * @param {OpenAI} client
@@ -141,37 +136,34 @@ export class CwalletTranslate {
                     const targetLanguage = this.searchLanguage(language);
                     const originLanguage = this.searchLanguage(this.SOURCE_LANGUAGE);
                     if (!targetLanguage) {
-                        throw new Error(`不支持的语言：${language}`);
+                        throw new Error(`Unsupported language: ${language}`);
                     }
                     if (!originLanguage) {
-                        throw new Error(`不支持的语言：${this.SOURCE_LANGUAGE}`);
+                        throw new Error(`Unsupported language: ${this.SOURCE_LANGUAGE}`);
                     }
                     setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-                        var _a, _b, _c;
-                        const chatCompletion = yield this.client.chat.completions.create({
-                            model: (_a = this.openaiConfig) === null || _a === void 0 ? void 0 : _a.model,
-                            messages: [
+                        var _a, _b;
+                        const chatCompletion = yield this.client.chat.completions.create(Object.assign(Object.assign({ model: "gpt-4o" }, this.chatCompletionCreateParams), { stream: false, messages: [
                                 ...this.fineTune.map((val) => ({
                                     role: "system",
                                     content: val,
                                 })),
                                 {
                                     role: "system",
-                                    content: `请将${originLanguage.name}翻译成${targetLanguage.name}`,
+                                    content: `Please translate ${originLanguage.name} to ${targetLanguage.name}`,
                                 },
                                 {
                                     role: "system",
-                                    content: `翻译完成直接输出后对应意思的内容不要携带任何无关内容`,
+                                    content: `After translation is complete, directly output the corresponding meaning without any irrelevant content`,
                                 },
                                 {
                                     role: "user",
                                     content: value,
                                 },
-                            ],
-                        });
+                            ] }));
                         resolve({
                             key,
-                            value: (_c = (_b = chatCompletion === null || chatCompletion === void 0 ? void 0 : chatCompletion.choices[0]) === null || _b === void 0 ? void 0 : _b.message.content) !== null && _c !== void 0 ? _c : value,
+                            value: (_b = (_a = chatCompletion === null || chatCompletion === void 0 ? void 0 : chatCompletion.choices[0]) === null || _a === void 0 ? void 0 : _a.message.content) !== null && _b !== void 0 ? _b : value,
                             index,
                         });
                     }), getRandomNumber(200, 300));
@@ -188,14 +180,14 @@ export class CwalletTranslate {
             });
         };
         /**
-         * 对比缓存文件 获取需要翻译的内容
+         * Compare cache files to get content that needs translation
          * @param language
          * @param fileName
          * @returns
          */
         this.getTranslateContent = (language, fileName) => __awaiter(this, void 0, void 0, function* () {
             const translateFilePath = path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName);
-            /** 缓存文件路径 */
+            /** Cache file path */
             const cacheFilePath = path.join(this.CACHE_ROOT_PATH, language, fileName);
             if (!fs.existsSync(translateFilePath)) {
                 console.dir(`File not found: ${translateFilePath}`);
@@ -217,18 +209,18 @@ export class CwalletTranslate {
             return diffObject;
         });
         /**
-         * 输出语言文件
+         * Output language file
          * @param {Object} jsonMap
          */
         this.outputLanguageFile = (params) => __awaiter(this, void 0, void 0, function* () {
             const { folderName, fileName, jsonMap } = params;
             const outputFilePath = path.join(this.outputPath, folderName, fileName);
-            //创建输出文件夹
+            // Create output folder
             notExistsToCreateFile(this.outputPath);
-            //创建输出的语言文件夹
+            // Create output language folder
             notExistsToCreateFile(`${this.outputPath}/${folderName}`);
             let oldJsonData = "";
-            // 检查是否存在文件
+            // Check if file exists
             if (!fs.existsSync(outputFilePath)) {
                 oldJsonData = yield fs.readFileSync(path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName), "utf8");
             }
@@ -238,7 +230,7 @@ export class CwalletTranslate {
             const oldJsonMap = JSON.parse(oldJsonData);
             const newJsonMap = Object.assign(oldJsonMap, jsonMap);
             yield fs.writeFileSync(path.resolve(outputFilePath), JSON.stringify(newJsonMap, null, 2), "utf8");
-            // 注册缓存
+            // Register cache
             registerLanguageCacheFile({
                 sourceFilePath: path.join(this.ENTRY_ROOT_PATH, this.SOURCE_LANGUAGE, fileName),
                 jsonMap: newJsonMap,
@@ -250,11 +242,16 @@ export class CwalletTranslate {
         this.OPENAI_KEY = params.key;
         this.CACHE_ROOT_PATH = params.cacheFileRootPath;
         this.ENTRY_ROOT_PATH = params.fileRootPath;
-        this.openaiConfig = (_a = params.openaiConfig) !== null && _a !== void 0 ? _a : DEFAULT_OPENAI_CONFIG;
-        this.SOURCE_LANGUAGE = (_b = params.sourceLanguage) !== null && _b !== void 0 ? _b : "en";
+        this.openaiClientConfig =
+            (_a = params.openaiClientConfig) !== null && _a !== void 0 ? _a : DEFAULT_OPENAI_CONFIG;
+        this.chatCompletionCreateParams =
+            (_b = params.chatCompletionCreateParams) !== null && _b !== void 0 ? _b : {
+                model: "gpt-4o",
+            };
+        this.SOURCE_LANGUAGE = (_c = params.sourceLanguage) !== null && _c !== void 0 ? _c : "en";
         this.OUTPUT_ROOT_PATH = params.outputRootPath;
         this.fineTune = params.fineTune;
-        this.languages = (_c = params.languages) !== null && _c !== void 0 ? _c : [];
+        this.languages = (_d = params.languages) !== null && _d !== void 0 ? _d : [];
         this.createOpenAIClient();
     }
     get supportLanguages() {

@@ -46,7 +46,7 @@ export class CwalletTranslate {
   /** default model gpt-4o */
   openaiClientConfig: ClientOptions;
   fineTune: string[];
-  chatCompletionCreateParams: ChatCompletionCreateParams;
+  chatCompletionCreateParams: Partial<ChatCompletionCreateParams>;
 
   constructor(params: ICwalletTranslateParams) {
     this.OPENAI_KEY = params.key;
@@ -58,7 +58,7 @@ export class CwalletTranslate {
       params.chatCompletionCreateParams ??
       ({
         model: "gpt-4o",
-      } as ChatCompletionCreateParams);
+      } as Partial<ChatCompletionCreateParams>);
     this.SOURCE_LANGUAGE = params.sourceLanguage ?? "en";
     this.OUTPUT_ROOT_PATH = params.outputRootPath;
     this.fineTune = params.fineTune;
@@ -238,6 +238,7 @@ export class CwalletTranslate {
 
         setTimeout(async () => {
           const chatCompletion = await this.client!.chat.completions.create({
+            model: "gpt-4o",
             ...this.chatCompletionCreateParams,
             stream: false,
             messages: [

@@ -1,5 +1,6 @@
 import { MultiBar } from "cli-progress";
-import OpenAI from "openai";
+import OpenAI, { ClientOptions } from "openai";
+import { ChatCompletionCreateParams } from "openai/resources";
 export interface ILanguage {
     /** 语言code */
     code: SupportLanguageType;
@@ -67,7 +68,8 @@ export interface ICwalletTranslateParams {
     languages: SupportLanguageType[];
     outputRootPath?: string;
     sourceLanguage?: SupportLanguageType;
-    openaiConfig?: IOpenaiConfig;
+    openaiClientConfig?: ClientOptions;
+    chatCompletionCreateParams?: Partial<ChatCompletionCreateParams>;
 }
 export interface ITranslate {
 }

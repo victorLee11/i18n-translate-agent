@@ -109,7 +109,7 @@ export interface ICwalletTranslateParams {
   outputRootPath?: string;
   sourceLanguage?: SupportLanguageType;
   openaiClientConfig?: ClientOptions;
-  chatCompletionCreateParams?: ChatCompletionCreateParams;
+  chatCompletionCreateParams?: Partial<ChatCompletionCreateParams>;
 }
 
 export interface ITranslate {}

@@ -45,9 +45,11 @@ async function main() {
       fineTune: config.fineTune,
       languages: config.languages,
       sourceLanguage: config.sourceLanguage,
-      openaiConfig: {
-        model: config.model,
+      openaiClientConfig: {
         baseURL: config.baseURL,
+      },
+      chatCompletionCreateParams: {
+        model: config.model,
       },
     });
 
